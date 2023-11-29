@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}
+Login
+{% endblock %}
+
+{% block content %}
+<a href="{% url "register" %}" class="btn-link taks__btn btn">Register</a>
+<h3 class="login__heading heading">Login</h3>
+<form method="POST" class="login__form form">
+    {% csrf_token %}
+    {% for field in form %}
+        <div class="form__field">
+            {{ field.label_tag }}
+            {{ field }}
+            {{ field.errors }} 
+        </div>   
+    {% endfor %}
+    <button class="login__btn btn">Login</button>
+</form>  
+{% endblock %}

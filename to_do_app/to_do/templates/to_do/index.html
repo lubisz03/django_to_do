@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+To-Do
+{% endblock %}
+
+{% block content %}
+<a href="{% url "logout" %}" class="btn-link taks__btn btn">Logout</a>
+<h3 class="tasks__heading heading">Add taks</h3>
+<form method="POST" class="tasks__form form">
+    {% csrf_token %}
+    {% for field in form %}
+        <div class="form__field">
+            {{ field.label_tag }}
+            {{ field }}
+            {{ field.errors }} 
+        </div>   
+    {% endfor %}
+    <button class="tasks__btn btn">Add</button>
+</form>
+<ul class="tasks__list">
+    {% for task in tasks %}
+        {% include "to_do/includes/task.html" %}
+    {% endfor %}
+</ul>
+{% if tasks|length %}
+    <p class="tasks__info">*click on task to delete</p>
+{% else %}
+    <p class="tasks__info">NO TASKS TO DISPLAY</p>
+{% endif %}
+{% endblock %}
