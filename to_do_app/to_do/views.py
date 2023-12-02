@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse_lazy
 from django.views import View
 from .forms import RegisterForm, TaskForm
 from django.views.generic.list import ListView
+from django.views.generic import FormView
 from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
@@ -12,20 +13,15 @@ from .models import Task
 # # Create your views here.
 
 
-class RegisterView(View):
-    def get(self, request):
-        form = RegisterForm()
-        return render(request, 'to_do/register.html', {'form': form})
+class RegisterView(FormView):
+    form_class = RegisterForm
+    template_name = "to_do/register.html"
+    success_url = reverse_lazy("index")
 
-    def post(self, request):
-        form = RegisterForm(request.POST)
-
-        if form.is_valid():
-            user = form.save()
-            login(request, user)
-            return redirect(reverse('index'))
-
-        return render(request, 'to_do/register.html', {'form': form})
+    def form_valid(self, form):
+        user = form.save()
+        login(self.request, user)
+        return super().form_valid(form)
 
 
 class LoginView(LoginView):
@@ -59,7 +55,7 @@ class IndexView(LoginRequiredMixin, ListView):
             task = form.save(commit=False)
             task.user = request.user
             task.save()
-            return redirect(reverse('index'))
+            return redirect(reverse_lazy('index'))
         else:
             user_tasks = Task.objects.filter(user=request.user)
             return render(request, "to_do/index.html", {"tasks": user_tasks, "form": form})
@@ -71,4 +67,4 @@ class RemoveTaskView(LoginRequiredMixin, View):
     def get(self, request, id):
         task = Task.objects.get(id=id)
         task.delete()
-        return redirect(reverse("index"))
+        return redirect(reverse_lazy("index"))
