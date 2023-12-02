@@ -14,7 +14,9 @@ To-Do
         <div class="form__field">
             {{ field.label_tag }}
             {{ field }}
-            {{ field.errors }} 
+            {% if field.errors %}
+                <p>{{ field.errors|striptags}}</p> 
+            {% endif %}
         </div>   
     {% endfor %}
     <button class="tasks__btn btn">Add</button>

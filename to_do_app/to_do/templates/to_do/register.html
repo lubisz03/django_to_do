@@ -7,12 +7,13 @@
     <h3 class="register__heading heading">Register</h3>
     <form method="POST" class="register__form form">
         {% csrf_token %}
-        {% comment %} {{form.as_p}} {% endcomment %}
         {% for field in form %}
         <div class="form__field">
             {{ field.label_tag }}
             {{ field }}
-            {{ field.errors }} 
+            {% if field.errors %}
+	        	<p>{{ field.errors|striptags}}</p> 
+	        {% endif %}
         </div>   
         {% endfor %}
         <button class="register__btn btn">Register</button>
